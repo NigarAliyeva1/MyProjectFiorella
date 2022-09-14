@@ -78,7 +78,7 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Product dbProduct = await _db.Products.FirstOrDefaultAsync(x => x.Id == id);
+            Product dbProduct = await _db.Products.Include(x=>x.ProductDetail).FirstOrDefaultAsync(x => x.Id == id);
             if (dbProduct == null)
             {
                 return BadRequest();
@@ -97,7 +97,7 @@ namespace Fiorella.Areas.Admin.Controllers
 
 
 
-            Product dbProduct = await _db.Products.FirstOrDefaultAsync(x => x.Id == id);
+            Product dbProduct = await _db.Products.Include(x => x.ProductDetail).FirstOrDefaultAsync(x => x.Id == id);
             if (dbProduct == null)
             {
                 return BadRequest();
@@ -129,13 +129,13 @@ namespace Fiorella.Areas.Admin.Controllers
                     return View(dbProduct);
                 }
                 string folder = Path.Combine(_env.WebRootPath, "img");
-                product.Image = await product.Photo.SaveFileAsync(folder);
+                dbProduct.Image = await product.Photo.SaveFileAsync(folder);
             }
 
             dbProduct.CategoryId = catId;
             dbProduct.Name = product.Name;
-            dbProduct.Image = product.Image;
             dbProduct.Price = product.Price;
+            dbProduct.ProductDetail.Description = product.ProductDetail.Description;
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
