@@ -40,7 +40,7 @@ namespace Fiorella.Controllers
                 ModelState.AddModelError("", "Username or password is wrong!");
                 return View();
             }
-            if (user.isDeactive)
+            if (user.IsDeactive)
             {
                 ModelState.AddModelError("UserName", "This ccount has been blocked");
                 return View();

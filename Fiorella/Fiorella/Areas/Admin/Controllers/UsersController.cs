@@ -63,7 +63,7 @@ namespace Fiorella.Areas.Admin.Controllers
                 user.IsDeactive = true;
 
             }
-            await userManager.Up
+            await _userManager.UpdateAsync(user);
             return RedirectToAction("Index");
 
         }
