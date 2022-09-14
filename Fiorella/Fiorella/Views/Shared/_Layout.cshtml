@@ -51,8 +51,28 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">FAQ</a>
-                                    
                                 </li>
+                                @if(User.Identity.IsAuthenticated)
+                                {
+                                    <li class="nav-item">
+                                    <a class="nav-link" href="#">@User.Identity.Name</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                                    </li>
+                                    
+                                    <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                                    </li>
+
+                                }
                                 <li class="nav-item my-auto search">
                                     <i class="fas fa-search" id="search"></i>
                                     <ul class="list-unstyled py-3">

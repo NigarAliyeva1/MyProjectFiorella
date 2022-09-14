@@ -5,6 +5,6 @@ namespace Fiorella.Models
     public class AppUser:IdentityUser
     {
         public string FullName { get; set; }
-        public bool isDeactive { get; set; }
+        public bool IsDeactive { get; set; }
     }
 }
