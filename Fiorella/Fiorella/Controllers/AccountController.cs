@@ -4,6 +4,7 @@ using Fiorella.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -101,13 +102,12 @@ namespace Fiorella.Controllers
         //{
         //    if (!(await _roleManager.RoleExistsAsync(Helper.Roles.Admin.ToString())))
         //    {
-        //        await _roleManager.CreateAsync(new IdentityRole {Name= Helper.Roles.Admin.ToString() });
+        //        await _roleManager.CreateAsync(new IdentityRole { Name = Helper.Roles.Admin.ToString() });
         //    }
-        //    if(!(await _roleManager.RoleExistsAsync(Helper.Roles.Memmber.ToString())))
+        //    if (!(await _roleManager.RoleExistsAsync(Helper.Roles.Memmber.ToString())))
         //    {
-        //        await _roleManager.CreateAsync(new IdentityRole {Name= Helper.Roles.Memmber.ToString() });
+        //        await _roleManager.CreateAsync(new IdentityRole { Name = Helper.Roles.Memmber.ToString() });
         //    }
         //}
-
     }
 }
