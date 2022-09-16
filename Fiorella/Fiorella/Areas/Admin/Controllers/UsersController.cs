@@ -147,7 +147,52 @@ namespace Fiorella.Areas.Admin.Controllers
             bool isExist = await _db.Users.AnyAsync(x => x.Email == updateVM.Email || x.UserName == updateVM.UserName);
             if (isExist)
             {
+                ModelState.AddModelError("", "Username or email is alrready exist");
+                return View(dbUpdateVM);
+            }
+            user.FullName = updateVM.FullName;
+            user.UserName = updateVM.UserName;
+            user.Email = updateVM.Email;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> ResetPassword(string id)
+        {
 
+            if (id == null)
+            {
+                return NotFound();
+            }
+            AppUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(string id,ResetPasswordVM resetPasswordVM)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+            AppUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            string token= await _userManager.GeneratePasswordResetTokenAsync(user);
+           IdentityResult identityResult= await _userManager.ResetPasswordAsync(user, token, resetPasswordVM.Password);
+            if (!identityResult.Succeeded)
+            {
+                foreach (IdentityError error in identityResult.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View();
             }
             return RedirectToAction("Index");
         }
