@@ -26,6 +26,8 @@ namespace Fiorella.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
+
+
         
     }
 }

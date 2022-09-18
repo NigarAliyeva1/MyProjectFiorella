@@ -65,6 +65,16 @@
                                             <a asp-action="Update" asp-route-id="@item.Id" style="width:120px" class="btn btn-outline-info mx-2 btn-rounded">Update</a>
                                             @if (item.UserName != User.Identity.Name)
                                             {
+                                                <a asp-action="ChangeRole" asp-route-id="@item.Id" style="width:120px" class="btn btn-outline-linkedin mx-2 btn-rounded">Change Role</a>
+                                            }
+                                            else
+                                            {
+                                                <a style="width:120px" class="btn btn-outline-secondary mx-2 btn-rounded">Change Role</a>
+
+                                            }
+                                            
+                                            @if (item.UserName != User.Identity.Name)
+                                            {
                                                 @if (item.IsDeactive)
                                                 {
                                                     <a asp-action="Activity" asp-route-id="@item.Id" style="width:120px" class="btn btn-outline-success mx-2 btn-rounded">Activate</a>

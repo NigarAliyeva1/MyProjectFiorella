@@ -1,0 +1,32 @@
+﻿@model ChangeRoleVM
+
+<div class="form-group">
+ 
+            <label>Change Role</label>
+           <form class="forms-sample" method="post" enctype="multipart/form-data">
+               <div class="form-group">
+                    <label>@Model.Username</label>
+                    <select class="form-control" name="newRole">
+                    @foreach (string item in Model.Roles)
+                   {
+                       if(Model.Role==item)
+                       {
+                           <option selected value="@item">@item</option>
+                       }
+                       else
+                       {
+                           <option  value="@item">@item</option>
+                       }
+                   }
+                   </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                <a asp-action="Index" class="btn btn-secondary" text-white>Go Back</a>
+            </form>
+ 
+
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+

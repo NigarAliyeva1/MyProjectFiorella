@@ -21,7 +21,7 @@ namespace Fiorella.Areas.Admin.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _db;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UsersController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager,AppDbContext db)
+        public UsersController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -48,10 +48,16 @@ namespace Fiorella.Areas.Admin.Controllers
             return View(userVMs);
 
         }
+
+
+
         public IActionResult Create()
         {
             return View();
         }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegisterVM register)
@@ -78,6 +84,9 @@ namespace Fiorella.Areas.Admin.Controllers
             await _userManager.AddToRoleAsync(appUser, Helper.Roles.Admin.ToString());
             return RedirectToAction("Index");
         }
+
+
+
         public async Task<IActionResult> Activity(string id)
         {
             if (id == null)
@@ -115,15 +124,15 @@ namespace Fiorella.Areas.Admin.Controllers
             }
             UpdateVM dbUpdateVM = new UpdateVM
             {
-                FullName=user.FullName,
-                UserName=user.UserName,
-                Email=user.Email    
+                FullName = user.FullName,
+                UserName = user.UserName,
+                Email = user.Email
             };
             return View(dbUpdateVM);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(string id,UpdateVM updateVM)
+        public async Task<IActionResult> Update(string id, UpdateVM updateVM)
         {
             if (id == null)
             {
@@ -172,7 +181,7 @@ namespace Fiorella.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(string id,ResetPasswordVM resetPasswordVM)
+        public async Task<IActionResult> ResetPassword(string id, ResetPasswordVM resetPasswordVM)
         {
 
             if (id == null)
@@ -184,8 +193,8 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 return BadRequest();
             }
-            string token= await _userManager.GeneratePasswordResetTokenAsync(user);
-           IdentityResult identityResult= await _userManager.ResetPasswordAsync(user, token, resetPasswordVM.Password);
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            IdentityResult identityResult = await _userManager.ResetPasswordAsync(user, token, resetPasswordVM.Password);
             if (!identityResult.Succeeded)
             {
                 foreach (IdentityError error in identityResult.Errors)
@@ -193,6 +202,72 @@ namespace Fiorella.Areas.Admin.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
                 return View();
+            }
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> ChangeRole(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            AppUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            List<string> roles = new List<string>();
+
+            roles.Add(Helper.Roles.Admin.ToString());
+            roles.Add(Helper.Roles.Memmber.ToString());
+            string oldRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            ChangeRoleVM changeRole = new ChangeRoleVM
+            {
+                Username = user.UserName,
+                Role = oldRole,
+                Roles = roles
+            };
+            return View(changeRole);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeRole(string id, string newRole)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            AppUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            List<string> roles = new List<string>();
+
+            roles.Add(Helper.Roles.Admin.ToString());
+            roles.Add(Helper.Roles.Memmber.ToString());
+            string oldRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            ChangeRoleVM changeRole = new ChangeRoleVM
+            {
+                Username = user.UserName,
+                Role = oldRole,
+                Roles = roles
+            };
+            IdentityResult addIdentityResult=await _userManager.AddToRoleAsync(user, newRole);
+            if (!addIdentityResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Error");
+                return View(changeRole);
+            }
+            IdentityResult removeIdentityResult = await _userManager.RemoveFromRoleAsync(user, oldRole);
+            if (!removeIdentityResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Error");
+                return View(changeRole);
             }
             return RedirectToAction("Index");
         }
