@@ -3,11 +3,13 @@ using Fiorella.Helpers;
 using Fiorella.Models;
 using Fiorella.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static Fiorella.Helpers.Helper;
@@ -21,11 +23,13 @@ namespace Fiorella.Areas.Admin.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _db;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UsersController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db)
+        private readonly IWebHostEnvironment _env;
+        public UsersController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db, IWebHostEnvironment env)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _db = db;
+            _env = env;
         }
 
         public async Task<IActionResult> Index()
@@ -41,7 +45,8 @@ namespace Fiorella.Areas.Admin.Controllers
                     Email = user.Email,
                     Id = user.Id,
                     IsDeactive = user.IsDeactive,
-                    Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()
+                    Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault(),
+                    Image=user.Image
                 };
                 userVMs.Add(userVM);
             }
@@ -70,7 +75,8 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 FullName = register.FullName,
                 Email = register.Email,
-                UserName = register.UserName
+                UserName = register.UserName,
+                Image = register.Image
             };
             IdentityResult identityResult = await _userManager.CreateAsync(appUser, register.Password);
             if (!identityResult.Succeeded)
@@ -81,6 +87,23 @@ namespace Fiorella.Areas.Admin.Controllers
                 }
                 return View();
             }
+            if (appUser.Photo == null)
+            {
+                ModelState.AddModelError("Photo", "Please choose an image");
+                return View();
+            }
+            if (!appUser.Photo.IsImage())
+            {
+                ModelState.AddModelError("Photo", "Please choose the image flie");
+                return View();
+            }
+            if (appUser.Photo.IsOlder1MB())
+            {
+                ModelState.AddModelError("Photo", "Please choose Max 1mb image flie");
+                return View();
+            }
+            string folder = Path.Combine(_env.WebRootPath, "img");
+            appUser.Image = await appUser.Photo.SaveFileAsync(folder);
             await _userManager.AddToRoleAsync(appUser, Helper.Roles.Admin.ToString());
             return RedirectToAction("Index");
         }
@@ -132,7 +155,7 @@ namespace Fiorella.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(string id, UpdateVM updateVM)
+        public async Task<IActionResult> Update(string id, UpdateVM updateVM,AppUser appUser)
         {
             if (id == null)
             {
@@ -148,6 +171,7 @@ namespace Fiorella.Areas.Admin.Controllers
                 FullName = user.FullName,
                 UserName = user.UserName,
                 Email = user.Email
+                
             };
             if (!ModelState.IsValid)
             {
@@ -158,6 +182,22 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("", "Username or email is alrready exist");
                 return View(dbUpdateVM);
+            }
+
+            if (appUser.Photo != null)
+            {
+                if (!appUser.Photo.IsImage())
+                {
+                    ModelState.AddModelError("Photo", "Please choose the image flie");
+                    return View(user);
+                }
+                if (appUser.Photo.IsOlder1MB())
+                {
+                    ModelState.AddModelError("Photo", "Please choose Max 1mb image flie");
+                    return View(user);
+                }
+                string folder = Path.Combine(_env.WebRootPath, "img");
+                user.Image = await appUser.Photo.SaveFileAsync(folder);
             }
             user.FullName = updateVM.FullName;
             user.UserName = updateVM.UserName;

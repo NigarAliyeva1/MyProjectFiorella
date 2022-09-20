@@ -324,3 +324,5 @@ C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug
 C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug\net5.0\Razor\Areas\Admin\Views\Users\Update.cshtml.g.cs
 C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug\net5.0\Razor\Areas\Admin\Views\Users\ResetPassword.cshtml.g.cs
 C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug\net5.0\Razor\Areas\Admin\Views\Users\ChangeRole.cshtml.g.cs
+C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug\net5.0\Razor\Views\Profile\Index.cshtml.g.cs
+C:\Users\nigar\OneDrive\Masaüstü\MyProjectFiorella\Fiorella\Fiorella\obj\Debug\net5.0\Razor\Areas\Admin\Views\Profile\Index.cshtml.g.cs

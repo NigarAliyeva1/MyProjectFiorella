@@ -13,6 +13,9 @@
                         <thead>
                             <tr>
                                 <th>
+                                    Image
+                                </th>
+                                <th>
                                     FullName
                                 </th>
                                 <th>
@@ -36,6 +39,9 @@
                             @foreach (UserVM item in Model)
                             {
                                 <tr>
+                                    <td>
+                                        <img src="~/img/@item.Image" />
+                                    </td>
                                     <td>
                                         @item.FullName
                                     </td>

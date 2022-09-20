@@ -1,6 +1,7 @@
 ﻿using Fiorella.Helpers;
 using Fiorella.Models;
 using Fiorella.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Fiorella.Controllers
 {
+    
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -25,6 +27,10 @@ namespace Fiorella.Controllers
         }
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return NotFound();
+            }
             return View();
         }
         [HttpPost]
@@ -61,6 +67,10 @@ namespace Fiorella.Controllers
         }
         public IActionResult Register()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return NotFound();
+            }
             return View();
         }
         
@@ -95,6 +105,10 @@ namespace Fiorella.Controllers
         }
         public async Task<IActionResult> Logout()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return NotFound();
+            }
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }

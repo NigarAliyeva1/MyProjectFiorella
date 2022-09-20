@@ -19,6 +19,6 @@ namespace Fiorella.ViewModels
         public string Role { get; set; }
 
         public bool IsDeactive { get; set; }
-
+        public string Image { get; set; }
     }
 }
