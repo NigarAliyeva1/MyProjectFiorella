@@ -18,9 +18,6 @@ namespace Fiorella.Models
         public IFormFile Photo { get; set; }
         public ProductDetail ProductDetail { get; set; }
 
-        public static implicit operator Product(List<Product> v)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

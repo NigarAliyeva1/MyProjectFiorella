@@ -11,7 +11,7 @@ namespace Fiorella.Migrations
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: true,
-                defaultValue:"user.png");
+                defaultValue: "user.png");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

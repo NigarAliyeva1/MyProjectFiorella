@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Fiorella.ViewModels
 {
@@ -28,7 +29,9 @@ namespace Fiorella.ViewModels
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
+        public IFormFile Photo { get; set; }
 
-        
+
+
     }
 }

@@ -2,10 +2,12 @@
 using Fiorella.Models;
 using Fiorella.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -17,13 +19,16 @@ namespace Fiorella.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IWebHostEnvironment _env;
         public AccountController(UserManager<AppUser> userManager, 
                                  SignInManager<AppUser> signInManager,
-                                 RoleManager<IdentityRole> roleManager)
+                                 RoleManager<IdentityRole> roleManager,
+                                 IWebHostEnvironment env)
         {
             _userManager=userManager;
             _signInManager=signInManager;
             _roleManager=roleManager;
+            _env=env;
         }
         public IActionResult Login()
         {
@@ -86,7 +91,8 @@ namespace Fiorella.Controllers
             {
                 FullName = register.FullName,
                 Email = register.Email,
-                UserName=register.UserName
+                UserName=register.UserName,
+                Image=register.Image
             };
             IdentityResult identityResult= await _userManager.CreateAsync(appUser,register.Password);
             if (!identityResult.Succeeded)
@@ -96,10 +102,23 @@ namespace Fiorella.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
                 return View();
+
             }
+            if (!appUser.Photo.IsImage())
+            {
+                ModelState.AddModelError("Photo", "Please choose the image flie");
+                return View();
+            }
+            if (appUser.Photo.IsOlder1MB())
+            {
+                ModelState.AddModelError("Photo", "Please choose Max 1mb image flie");
+                return View();
+            }
+            string folder = Path.Combine(_env.WebRootPath, "img");
+            appUser.Image = await appUser.Photo.SaveFileAsync(folder);
 
             await _signInManager.SignInAsync(appUser,true);
-            await _userManager.AddToRoleAsync(appUser, Helper.Roles.Memmber.ToString());
+            await _userManager.AddToRoleAsync(appUser, Helper.Roles.Member.ToString());
 
             return RedirectToAction("Index","Home");
         }
@@ -118,9 +137,9 @@ namespace Fiorella.Controllers
         //    {
         //        await _roleManager.CreateAsync(new IdentityRole { Name = Helper.Roles.Admin.ToString() });
         //    }
-        //    if (!(await _roleManager.RoleExistsAsync(Helper.Roles.Memmber.ToString())))
+        //    if (!(await _roleManager.RoleExistsAsync(Helper.Roles.Member.ToString())))
         //    {
-        //        await _roleManager.CreateAsync(new IdentityRole { Name = Helper.Roles.Memmber.ToString() });
+        //        await _roleManager.CreateAsync(new IdentityRole { Name = Helper.Roles.Member.ToString() });
         //    }
         //}
     }

@@ -24,6 +24,9 @@ namespace Fiorella.Areas.Admin.Controllers
         private readonly AppDbContext _db;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IWebHostEnvironment _env;
+
+        public object Session { get; private set; }
+
         public UsersController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext db, IWebHostEnvironment env)
         {
             _userManager = userManager;
@@ -87,24 +90,31 @@ namespace Fiorella.Areas.Admin.Controllers
                 }
                 return View();
             }
-            if (appUser.Photo == null)
+            if (appUser.Photo != null)
             {
-                ModelState.AddModelError("Photo", "Please choose an image");
-                return View();
+                if (!appUser.Photo.IsImage())
+                {
+                    ModelState.AddModelError("Photo", "Please choose the image flie");
+                    return View();
+                }
+                if (appUser.Photo.IsOlder1MB())
+                {
+                    ModelState.AddModelError("Photo", "Please choose Max 1mb image flie");
+                    return View();
+                }
+                //ModelState.AddModelError("Photo", "Please choose an image");
+                //return View();
+                string folder = Path.Combine(_env.WebRootPath, "img");
+                appUser.Image = await appUser.Photo.SaveFileAsync(folder);
             }
-            if (!appUser.Photo.IsImage())
+            else
             {
-                ModelState.AddModelError("Photo", "Please choose the image flie");
-                return View();
+                appUser.Image = "user.png";
             }
-            if (appUser.Photo.IsOlder1MB())
-            {
-                ModelState.AddModelError("Photo", "Please choose Max 1mb image flie");
-                return View();
-            }
-            string folder = Path.Combine(_env.WebRootPath, "img");
-            appUser.Image = await appUser.Photo.SaveFileAsync(folder);
+            
+           
             await _userManager.AddToRoleAsync(appUser, Helper.Roles.Admin.ToString());
+            await _userManager.UpdateAsync(appUser);
             return RedirectToAction("Index");
         }
 
@@ -153,6 +163,7 @@ namespace Fiorella.Areas.Admin.Controllers
             };
             return View(dbUpdateVM);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(string id, UpdateVM updateVM,AppUser appUser)
@@ -177,10 +188,10 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 return View(dbUpdateVM);
             }
-            bool isExist = await _db.Users.AnyAsync(x => x.Email == updateVM.Email || x.UserName == updateVM.UserName);
+            bool isExist = await _db.Users.AnyAsync(x => x.UserName == updateVM.UserName && x.Id !=appUser.Id);
             if (isExist)
             {
-                ModelState.AddModelError("", "Username or email is alrready exist");
+                ModelState.AddModelError("", "Username is alrready exist");
                 return View(dbUpdateVM);
             }
 
@@ -261,7 +272,7 @@ namespace Fiorella.Areas.Admin.Controllers
             List<string> roles = new List<string>();
 
             roles.Add(Helper.Roles.Admin.ToString());
-            roles.Add(Helper.Roles.Memmber.ToString());
+            roles.Add(Helper.Roles.Member.ToString());
             string oldRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
             ChangeRoleVM changeRole = new ChangeRoleVM
             {
@@ -289,7 +300,7 @@ namespace Fiorella.Areas.Admin.Controllers
             List<string> roles = new List<string>();
 
             roles.Add(Helper.Roles.Admin.ToString());
-            roles.Add(Helper.Roles.Memmber.ToString());
+            roles.Add(Helper.Roles.Member.ToString());
             string oldRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
             ChangeRoleVM changeRole = new ChangeRoleVM
             {
@@ -311,5 +322,15 @@ namespace Fiorella.Areas.Admin.Controllers
             }
             return RedirectToAction("Index");
         }
+        //public ActionResult GetPhoto()
+        //{
+        //    string user = Session["Index"] as string;
+        //    byte[] Photo = _db
+        //        .tblUsers
+        //        .Where(p => p.UserName == user)
+        //        .Select(img => img.Photo)
+        //        .FirstOrDefault();
+        //    return File(Photo, "image/");
+        //}
     }
 }

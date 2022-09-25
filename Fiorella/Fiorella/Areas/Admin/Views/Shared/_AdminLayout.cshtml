@@ -144,7 +144,7 @@
                     </li>
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
-                            <img src="~/admin/images/faces/face5.jpg" alt="profile" />
+                            @*<img src="@Url.Action("Images", "UserVM")" alt="profile" />*@
                             <span class="nav-profile-name">@User.Identity.Name</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">

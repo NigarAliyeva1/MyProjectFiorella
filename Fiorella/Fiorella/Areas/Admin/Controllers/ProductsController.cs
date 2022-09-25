@@ -116,7 +116,7 @@ namespace Fiorella.Areas.Admin.Controllers
             bool isExist = await _db.Products.AnyAsync(x => x.Name == product.Name && x.Id != id);
             if (isExist)
             {
-                ModelState.AddModelError("Title", "This service is already exist");
+                ModelState.AddModelError("Title", "This product is already exist");
                 return View(dbProduct);
             }
             if (product.Photo != null)
