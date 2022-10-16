@@ -30,7 +30,15 @@ namespace Fiorella.Controllers
             };
             return View(homeVM);
         }
+        public async Task<IActionResult> GlobalSearch(string key)
+        {
+            List<Product> products = await _db.Products.Where(x => x.Name.Contains(key)).ToListAsync();
+            return PartialView("_ProductsSearchPartial", products);
+        }
 
-
+        public async Task<IActionResult> Error()
+        {
+            return View();
+        }
     }
 }

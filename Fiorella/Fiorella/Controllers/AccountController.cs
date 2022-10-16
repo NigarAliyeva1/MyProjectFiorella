@@ -34,7 +34,7 @@ namespace Fiorella.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return View("Error");
             }
             return View();
         }
@@ -74,7 +74,7 @@ namespace Fiorella.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return View("Error");
             }
             return View();
         }
@@ -126,7 +126,7 @@ namespace Fiorella.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return View("Error");
             }
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");

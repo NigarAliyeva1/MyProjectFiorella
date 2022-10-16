@@ -26,7 +26,7 @@ namespace Fiorella.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return View("Error");
             }
             else
             {

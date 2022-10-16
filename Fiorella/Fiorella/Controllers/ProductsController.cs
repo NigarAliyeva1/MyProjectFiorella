@@ -30,13 +30,13 @@ namespace Fiorella.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Error");
             }
             Product product = await _db.Products.Include(x=>x.ProductDetail).FirstOrDefaultAsync(x => x.Id == id);
 
             if (product == null)
             {
-                return NotFound();
+                return View("Error");
             }
             return View(product);
         }

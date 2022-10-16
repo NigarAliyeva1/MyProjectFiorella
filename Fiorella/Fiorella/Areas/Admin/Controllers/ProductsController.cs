@@ -81,7 +81,7 @@ namespace Fiorella.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Product dbProduct = await _db.Products.Include(x=>x.ProductDetail).FirstOrDefaultAsync(x => x.Id == id);
+            Product dbProduct = await _db.Products.Include(x => x.ProductDetail).FirstOrDefaultAsync(x => x.Id == id);
             if (dbProduct == null)
             {
                 return BadRequest();
@@ -165,6 +165,19 @@ namespace Fiorella.Areas.Admin.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
 
+        }
+        public async Task<IActionResult> Detail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Product product = await _db.Products.Include(x=>x.Category).FirstOrDefaultAsync(x => x.Id == id);
+            if (product == null)
+            {
+                return BadRequest();
+            }
+            return View(product);
         }
     }
 }

@@ -84,14 +84,14 @@
                                 }
                                 <li class="nav-item my-auto search">
                                     <i class="fas fa-search" id="search"></i>
-                                    <ul class="list-unstyled py-3">
+                                    <ul style="height:300px;width:250px;overflow-y:auto" class="list-unstyled py-3" id="my-list">
                                         <li class="d-flex px-3">
-                                            <input id="input-search" type="text" placeholder="Search">
+                                            <input id="global-search" type="text" placeholder="Search">
                                             <i class="fas fa-search my-auto" id="search"></i>
                                         </li>
-
                                     </ul>
                                 </li>
+                                
                                 <li class="nav-item my-auto shop-cart">
                                     <i class="fas fa-shopping-bag"></i>
                                     <sup class="rounded-circle">0</sup>
@@ -143,7 +143,7 @@
                             <li class=""><a class="px-3" href="">Product Types 3</a></li>
                         </ul>
                     </ul>
-                    <li><a href="#">Portfolio <i class="fas fa-caret-right fa-sm"></i></a></a></li>
+                    <li><a href="#">Portfolio <i class="fas fa-caret-right fa-sm"></i></a></li>
                     <ul class="list-unstyled py-3">
                         <li class=""><a class="px-3" href="#">PRODUCT TYPES <i class="fas fa-caret-right fa-sm"></i></a>
                         </li>
@@ -167,7 +167,7 @@
                             <li class=""><a class="px-3" href="">Product Types 3</a></li>
                         </ul>
                     </ul>
-                    <li><a href="#">Blog <i class="fas fa-caret-right fa-sm"></i></a></a></li>
+                    <li><a href="#">Blog <i class="fas fa-caret-right fa-sm"></i></a></li>
                     <ul class="list-unstyled py-3">
                         <li class=""><a class="px-3" href="#">PRODUCT TYPES <i class="fas fa-caret-right fa-sm"></i></a>
                         </li>
@@ -191,7 +191,7 @@
                             <li class=""><a class="px-3" href="">Product Types 3</a></li>
                         </ul>
                     </ul>
-                    <li><a href="#">Elements <i class="fas fa-caret-right fa-sm"></i></a></a></li>
+                    <li><a href="#">Elements <i class="fas fa-caret-right fa-sm"></i></a></li>
                     <ul class="list-unstyled py-3">
                         <li class=""><a class="px-3" href="#">PRODUCT TYPES <i class="fas fa-caret-right fa-sm"></i></a>
                         </li>
@@ -313,6 +313,28 @@
     <script src="https://kit.fontawesome.com/e5e249fce2.js" crossorigin="anonymous"></script>
     <script src="~/owlcarousel/owl.carousel.min.js"></script>
     <script src="~/js/script.js"></script>
+    <script>
+
+        $(document).on("keyup", "#global-search", function () {
+            if ( $("#global-search").val().length>0){
+                 $("#my-list li").slice(1).remove()
+                $.ajax({
+                url: "/Home/GlobalSearch/",
+                type: "get",
+                data: {
+                    "key": $("#global-search").val()
+                },
+                success: function (response) {
+                   $("#my-list").append(response)
+                }
+            });
+
+            }
+            else{
+                $("#my-list li").slice(1).remove()
+            }
+        });
+    </script>
 </body>
 
 </html>

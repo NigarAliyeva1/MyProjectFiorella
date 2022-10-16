@@ -65,8 +65,6 @@ namespace Fiorella.Areas.Admin.Controllers
             }
             return View(dbService);
         }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int? id, Category service)
@@ -117,6 +115,19 @@ namespace Fiorella.Areas.Admin.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
 
+        }
+        public async Task<IActionResult> Detail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Category category = await _db.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            if (category == null)
+            {
+                return BadRequest();
+            }
+            return View(category);
         }
     }
 }
