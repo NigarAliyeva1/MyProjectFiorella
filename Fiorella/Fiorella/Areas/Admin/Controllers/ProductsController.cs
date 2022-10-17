@@ -72,6 +72,11 @@ namespace Fiorella.Areas.Admin.Controllers
             product.CategoryId = catId;
             await _db.Products.AddAsync(product);
             await _db.SaveChangesAsync();
+            List<Subscribe> subscribes = await _db.Subscribes.ToListAsync();
+            foreach (Subscribe item in subscribes)
+            {
+               await Helper.SendMessage("Salam", "Yeni məhsullarımız artıq satışdadır",item.Email);
+            }
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Update(int? id)

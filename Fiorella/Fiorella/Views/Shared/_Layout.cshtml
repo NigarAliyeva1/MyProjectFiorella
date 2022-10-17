@@ -313,8 +313,20 @@
     <script src="https://kit.fontawesome.com/e5e249fce2.js" crossorigin="anonymous"></script>
     <script src="~/owlcarousel/owl.carousel.min.js"></script>
     <script src="~/js/script.js"></script>
+    @if (User.Identity.IsAuthenticated) {
+        <script>
+            var userIsAuthenticated = true;
+        </script>
+         
+    }
+    else{
+        <script>
+            var userIsAuthenticated = false;
+        </script>
+    }
+    
+    @RenderSection("Scripts",false)
     <script>
-
         $(document).on("keyup", "#global-search", function () {
             if ( $("#global-search").val().length>0){
                  $("#my-list li").slice(1).remove()

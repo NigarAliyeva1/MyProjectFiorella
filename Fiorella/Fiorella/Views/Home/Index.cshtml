@@ -195,6 +195,8 @@
 
         <!-- SUBSCRIBE START -->
 
+        <!-- SUBSCRIBE START -->
+
         <section id="subscribe">
             <div class="container py-5">
                 <div class="row py-5">
@@ -202,15 +204,20 @@
                         <div class="content text-center py-5">
                             <h3>Join The Colorful Bunch!</h3>
                             <div class="form-group d-flex justify-content-center flex-wrap mt-5">
-                                <input id="sub-input" type="email" placeholder="Email Address" class="form-control-lg rounded-0">
-                                <button id="sub-button" class="btn btn-danger btn-lg rounded-0 px-5 mt-3 mt-sm-0">Subscribe</button>
+                                @if(!User.Identity.IsAuthenticated){
+                                    <input  id="sub-input" type="email" placeholder="Email Address" class="form-control-lg rounded-0">
+                                }
+                                
+                                <button id="sub-button"  class="btn btn-danger btn-lg rounded-0 px-5 mt-3 mt-sm-0">Subscribe</button>
                             </div>
-                            <div id="sub-error" style="background-color:white;" class="text-danger">Her hansi bir error</div>
+                            <div id="sub-error" class="text-danger" style="background-color:white;height:25px"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- SUBSCRIBE END -->
 
         <!-- SUBSCRIBE END -->
 
@@ -348,6 +355,63 @@
     </main>
 
     <!-- MAIN END -->
-   @* @section Scripts{
+    @section Scripts{
+       <script>
+          
+           $(document).on("click","#sub-button", function(){
+              if(!userIsAuthenticated){
+                  if($("#sub-input").val().length > 0){
+                   if(!isEmail($("#sub-input").val())){
+                        $("#sub-error").empty()
+                        $("#sub-error").append("Bu email adres deyil")
+                         return;
+                   }
+                   $.ajax({
+                       url:"/Home/Subscribe/",
+                       type:"get",
+                       data:{
+                           
+                           "email": $("#sub-input").val()},
+                       
+                       success:function (response) {
+                           $("#sub-error").empty()
+                           $("#sub-error").append(response)
+                       }
 
-    }*@
+                   })
+               }
+               else{
+                   $("#sub-error").empty()
+                   $("#sub-error").append("Bu xana bos ola bilmez")
+
+               }
+
+              }
+              else{
+                         $.ajax({
+                       url:"/Home/Subscribe/",
+                       type:"get",
+                       data:{
+                           
+                           "email": ""},
+                       
+                       success:function (response) {
+                           if(response == "Tebrikler siz abune oldunuz"){
+                               $("#sub-button").remove()
+                           }
+                           $("#sub-error").empty()
+                           $("#sub-error").append(response)
+                           
+                       }
+
+                   })
+              }
+               
+           });
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+       </script>
+
+   }
